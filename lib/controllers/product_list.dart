@@ -1,9 +1,10 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
-import 'package:network_caller/models/product_list.dart';
-import 'package:network_caller/services/network_caller.dart';
-import 'package:network_caller/services/urls/urls.dart';
+
+import '../data/models/product_list.dart';
+import '../data/services/network_caller.dart';
+import '../data/services/urls/urls.dart';
 
 class ProductListController extends GetxController {
   RxBool isLoading = true.obs;

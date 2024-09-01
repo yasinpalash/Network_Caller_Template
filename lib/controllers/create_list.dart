@@ -1,8 +1,9 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
-import 'package:network_caller/services/network_caller.dart';
-import 'package:network_caller/services/urls/urls.dart';
+
+import '../data/services/network_caller.dart';
+import '../data/services/urls/urls.dart';
 
 class CreateListController extends GetxController {
   RxBool inProgress = true.obs;
