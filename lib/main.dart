@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:network_caller/controller_binder.dart';
 import 'package:network_caller/views/product_screen.dart';
 
 void main() {
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       home: ProductScreen(),
+      initialBinding: ControllerBinder(),
     );
   }
 }
