@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+
 import '../models/response_data.dart';
 
 class NetworkCaller {
   final int timeoutDuration = 10;
-  final http.Client _client;
-  final String baseUrl;
 
-  NetworkCaller({http.Client? client, required this.baseUrl}) : _client = client ?? http.Client();
+
 
   // Common headers (e.g., for authentication)
   Map<String, String> _getHeaders() => {
@@ -18,12 +18,11 @@ class NetworkCaller {
   };
 
   Future<ResponseData> getRequest(String endpoint) async {
-    final String url = '$baseUrl$endpoint';
-    log('GET Request: $url');
+
+    log('GET Request: $endpoint');
     try {
-      final response = await _client
-          .get(
-        Uri.parse(url),
+      final Response response = await get(
+        Uri.parse(endpoint),
         headers: _getHeaders(),
       )
           .timeout(Duration(seconds: timeoutDuration));
@@ -34,14 +33,13 @@ class NetworkCaller {
   }
 
   Future<ResponseData> postRequest(String endpoint, {Map<String, dynamic>? body}) async {
-    final String url = '$baseUrl$endpoint';
-    log('POST Request: $url');
+    log('POST Request: $endpoint');
     log('Request Body: ${jsonEncode(body)}');
 
     try {
-      final response = await _client
-          .post(
-        Uri.parse(url),
+      final Response response = await
+    post(
+        Uri.parse(endpoint),
         headers: _getHeaders(),
         body: jsonEncode(body),
       )
@@ -53,14 +51,14 @@ class NetworkCaller {
   }
 
   Future<ResponseData> putRequest(String endpoint, {Map<String, dynamic>? body}) async {
-    final String url = '$baseUrl$endpoint';
-    log('PUT Request: $url');
+
+    log('PUT Request: $endpoint');
     log('Request Body: ${jsonEncode(body)}');
 
     try {
-      final response = await _client
-          .put(
-        Uri.parse(url),
+      final Response response = await
+          put(
+        Uri.parse(endpoint),
         headers: _getHeaders(),
         body: jsonEncode(body),
       )
@@ -72,12 +70,11 @@ class NetworkCaller {
   }
 
   Future<ResponseData> deleteRequest(String endpoint) async {
-    final String url = '$baseUrl$endpoint';
-    log('DELETE Request: $url');
+
+    log('DELETE Request: $endpoint');
     try {
-      final response = await _client
-          .delete(
-        Uri.parse(url),
+      final Response response = await delete(
+        Uri.parse(endpoint),
         headers: _getHeaders(),
       )
           .timeout(Duration(seconds: timeoutDuration));
@@ -87,6 +84,7 @@ class NetworkCaller {
     }
   }
 
+  // Handle the response from the server
   ResponseData _handleResponse(http.Response response) {
     log('Response Status: ${response.statusCode}');
     log('Response Body: ${response.body}');
@@ -111,43 +109,44 @@ class NetworkCaller {
           return ResponseData(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: decodedResponse['error'] ?? 'Bad Request',
+            errorMessage: decodedResponse['error'] ?? 'There was an issue with your request. Please try again.',
             responseData: null,
           );
         case 401:
-        // Handle token refresh logic if required
+          // await AuthController.clearAuthData();
+          // AuthController.goToLogin();
           return ResponseData(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: 'Unauthorized - Redirecting to login',
+            errorMessage: 'You are not authorized. Please log in to continue.',
             responseData: null,
           );
         case 403:
           return ResponseData(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: 'Forbidden - You do not have permission to access this resource',
+            errorMessage: 'You do not have permission to access this resource.',
             responseData: null,
           );
         case 404:
           return ResponseData(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: 'Resource not found',
+            errorMessage: 'The resource you are looking for was not found.',
             responseData: null,
           );
         case 500:
           return ResponseData(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: 'Internal server error',
+            errorMessage: 'Internal server error. Please try again later.',
             responseData: null,
           );
         default:
           return ResponseData(
             isSuccess: false,
             statusCode: response.statusCode,
-            errorMessage: decodedResponse['error'] ?? 'Something went wrong',
+            errorMessage: decodedResponse['error'] ?? 'Something went wrong. Please try again.',
             responseData: null,
           );
       }
@@ -155,12 +154,13 @@ class NetworkCaller {
       return ResponseData(
         isSuccess: false,
         statusCode: response.statusCode,
-        errorMessage: 'Failed to decode response',
+        errorMessage: 'Failed to process the response. Please try again later.',
         responseData: null,
       );
     }
   }
 
+  // Handle errors during the request process
   ResponseData _handleError(dynamic error) {
     log('Request Error: $error');
 
@@ -168,27 +168,23 @@ class NetworkCaller {
       return ResponseData(
         isSuccess: false,
         statusCode: 408,
-        errorMessage: 'Request timeout. Please try again later.',
+        errorMessage: 'Request timed out. Please check your internet connection and try again.',
         responseData: null,
       );
     } else if (error is http.ClientException) {
       return ResponseData(
         isSuccess: false,
         statusCode: 500,
-        errorMessage: 'Network error occurred. Please check your connection.',
+        errorMessage: 'Network error occurred. Please check your connection and try again.',
         responseData: null,
       );
     } else {
       return ResponseData(
         isSuccess: false,
         statusCode: 500,
-        errorMessage: 'Unexpected error occurred.',
+        errorMessage: 'Unexpected error occurred. Please try again later.',
         responseData: null,
       );
     }
-  }
-
-  void dispose() {
-    _client.close();
   }
 }

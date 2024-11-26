@@ -10,6 +10,8 @@ class HomeModels {
     message = json['message'];
     data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
+
+
 }
 
 class Data {
@@ -32,6 +34,8 @@ class Data {
       });
     }
   }
+
+
 }
 
 class Sessions {
@@ -47,14 +51,14 @@ class Sessions {
 
   Sessions(
       {this.id,
-      this.title,
-      this.level,
-      this.bookingStartFrom,
-      this.sessionTopics,
-      this.slug,
-      this.startAt,
-      this.sessionDate,
-      this.instructor});
+        this.title,
+        this.level,
+        this.bookingStartFrom,
+        this.sessionTopics,
+        this.slug,
+        this.startAt,
+        this.sessionDate,
+        this.instructor});
 
   Sessions.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -69,6 +73,8 @@ class Sessions {
         ? Instructor.fromJson(json['instructor'])
         : null;
   }
+
+
 }
 
 class Instructor {
@@ -86,6 +92,8 @@ class Instructor {
     sessionPrice = json['session_price'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
   }
+
+
 }
 
 class User {
@@ -98,6 +106,8 @@ class User {
     id = json['id'];
     fullName = json['full_name'];
   }
+
+
 }
 
 class Courses {
@@ -107,18 +117,18 @@ class Courses {
   String? language;
   String? lessonTopics;
   String? level;
-  Null? rating;
+  int? rating;
   Instructor? instructor;
 
   Courses(
       {this.id,
-      this.title,
-      this.slug,
-      this.language,
-      this.lessonTopics,
-      this.level,
-      this.rating,
-      this.instructor});
+        this.title,
+        this.slug,
+        this.language,
+        this.lessonTopics,
+        this.level,
+        this.rating,
+        this.instructor});
 
   Courses.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -132,30 +142,35 @@ class Courses {
         ? Instructor.fromJson(json['instructor'])
         : null;
   }
+
+
 }
 
-class SessionInstructor {
+class InstructorProfile {
   int? sessionPrice;
   User? user;
 
-  SessionInstructor({this.sessionPrice, this.user});
+  InstructorProfile({this.sessionPrice, this.user});
 
-  SessionInstructor.fromJson(Map<String, dynamic> json) {
+  InstructorProfile.fromJson(Map<String, dynamic> json) {
     sessionPrice = json['session_price'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
   }
+
+
 }
 
-class SessionUser {
+class UserProfile {
   String? fullName;
   String? email;
   String? id;
 
-  SessionUser({this.fullName, this.email, this.id});
+  UserProfile({this.fullName, this.email, this.id});
 
-  SessionUser.fromJson(Map<String, dynamic> json) {
+  UserProfile.fromJson(Map<String, dynamic> json) {
     fullName = json['full_name'];
     email = json['email'];
     id = json['id'];
   }
+
 }

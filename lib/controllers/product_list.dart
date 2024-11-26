@@ -19,8 +19,7 @@ class ProductListController extends GetxController {
     try {
       _inProgress(true);
       _errorMessage.value = '';
-
-      final response = await NetworkCaller(baseUrl: 'https://employee-beryl.vercel.app/api/v1').getRequest('/students/courses-session');
+      final response = await NetworkCaller().getRequest('https://employee-beryl.vercel.app/api/v1/students/courses-session');
       if (response.isSuccess) {
         _productList.value = HomeModels.fromJson(response.responseData);
       } else {
