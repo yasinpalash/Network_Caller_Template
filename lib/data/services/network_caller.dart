@@ -458,6 +458,7 @@ class NetworkCaller {
           'We received an unexpected response. Please try again later.';
     }
 
+
     return ResponseData(
       isSuccess: false,
       statusCode: 500,
