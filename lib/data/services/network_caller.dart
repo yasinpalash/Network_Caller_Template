@@ -115,11 +115,11 @@ class NetworkCaller {
     }
   }
 
+
   // Handle the response from the server
   Future<ResponseData> _handleResponse(Response response) async {
     try {
       final dynamic responseData = response.data;
-
       switch (response.statusCode) {
         case 200:
         case 201:
