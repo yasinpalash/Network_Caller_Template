@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import '../../halper.dart';
 import '../models/response_data.dart';
+
 
 class NetworkCaller {
   final int timeoutDuration = 10;
@@ -14,10 +17,11 @@ class NetworkCaller {
   }
 
   Future<ResponseData> getRequest(
-    String endpoint, {
-    String? token,
-    Map<String, dynamic>? queryParameters,
-  }) async {
+      String endpoint, {
+        String? token,
+        Map<String, dynamic>? queryParameters,
+      }) async {
+    AppLoggerHelper.info('GET Request: $endpoint');
     try {
       final Response response = await _dio.get(
         endpoint,
@@ -38,11 +42,13 @@ class NetworkCaller {
   }
 
   Future<ResponseData> postRequest(
-    String endpoint, {
-    Map<String, dynamic>? body,
-    String? token,
-    Map<String, dynamic>? queryParameters,
-  }) async {
+      String endpoint, {
+        Map<String, dynamic>? body,
+        String? token,
+        Map<String, dynamic>? queryParameters,
+      }) async {
+    AppLoggerHelper.info('POST Request: $endpoint');
+    AppLoggerHelper.info('Request Body: ${jsonEncode(body)}');
     try {
       final Response response = await _dio.post(
         endpoint,
@@ -64,19 +70,21 @@ class NetworkCaller {
   }
 
   Future<ResponseData> putRequest(
-    String endpoint, {
-    Map<String, dynamic>? body,
-    String? token,
-    Map<String, dynamic>? queryParameters,
-  }) async {
+      String endpoint, {
+        Map<String, dynamic>? body,
+        String? token,
+        Map<String, dynamic>? queryParameters,
+      }) async {
     try {
+      AppLoggerHelper.info('PUT Request: $endpoint');
+      AppLoggerHelper.info('Request Body: ${jsonEncode(body)}');
       final Response response = await _dio.put(
         endpoint,
         data: body,
         queryParameters: queryParameters,
         options: Options(
           headers: {
-            'Authorization': token ?? '',
+            'Authorization': token ??  '',
             'Content-Type': 'application/json',
           },
         ),
@@ -90,12 +98,13 @@ class NetworkCaller {
   }
 
   Future<ResponseData> deleteRequest(
-    String endpoint,
-    String? token, {
-    Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? body,
-  }) async {
+      String endpoint,
+      String? token, {
+        Map<String, dynamic>? queryParameters,
+        Map<String, dynamic>? body,
+      }) async {
     try {
+      AppLoggerHelper.info('DELETE Request: $endpoint');
       final Response response = await _dio.delete(
         endpoint,
         data: body,
@@ -118,6 +127,8 @@ class NetworkCaller {
 
   // Handle the response from the server
   Future<ResponseData> _handleResponse(Response response) async {
+    AppLoggerHelper.info('Response Status: ${response.statusCode}');
+    AppLoggerHelper.info('Response Body: ${response.data.toString()}');
     try {
       final dynamic responseData = response.data;
       switch (response.statusCode) {
@@ -164,7 +175,7 @@ class NetworkCaller {
             isSuccess: false,
             statusCode: response.statusCode ?? 401,
             errorMessage:
-                'Your session has expired. Please log in again to continue.',
+            'Your session has expired. Please log in again to continue.',
             responseData: null,
           );
         case 403:
@@ -179,7 +190,7 @@ class NetworkCaller {
             isSuccess: false,
             statusCode: response.statusCode ?? 404,
             errorMessage:
-                'The information you\'re looking for couldn\'t be found.',
+            'The information you\'re looking for couldn\'t be found.',
             responseData: null,
           );
         case 422:
@@ -210,7 +221,7 @@ class NetworkCaller {
             isSuccess: false,
             statusCode: response.statusCode ?? 429,
             errorMessage:
-                'You\'ve made too many requests. Please try again in a moment.',
+            'You\'ve made too many requests. Please try again in a moment.',
             responseData: null,
           );
         case 500:
@@ -221,7 +232,7 @@ class NetworkCaller {
             isSuccess: false,
             statusCode: response.statusCode ?? 500,
             errorMessage:
-                'We\'re experiencing technical difficulties. Please try again later.',
+            'We\'re experiencing technical difficulties. Please try again later.',
             responseData: null,
           );
         default:
@@ -229,8 +240,8 @@ class NetworkCaller {
             isSuccess: false,
             statusCode: response.statusCode ?? 0,
             errorMessage: responseData != null &&
-                    responseData is Map<String, dynamic> &&
-                    responseData['error'] != null
+                responseData is Map<String, dynamic> &&
+                responseData['error'] != null
                 ? responseData['error']
                 : 'Something went wrong. Please try again.',
             responseData: null,
@@ -242,7 +253,7 @@ class NetworkCaller {
         isSuccess: false,
         statusCode: response.statusCode ?? 0,
         errorMessage:
-            'We couldn\'t process the response. Please try again later.',
+        'We couldn\'t process the response. Please try again later.',
         responseData: null,
       );
     }
@@ -258,7 +269,7 @@ class NetworkCaller {
           isSuccess: false,
           statusCode: 408,
           errorMessage:
-              'The connection timed out. Please check your internet and try again.',
+          'The connection timed out. Please check your internet and try again.',
           responseData: null,
         );
       case DioExceptionType.sendTimeout:
@@ -266,7 +277,7 @@ class NetworkCaller {
           isSuccess: false,
           statusCode: 408,
           errorMessage:
-              'Sending data timed out. Please try again when you have a better connection.',
+          'Sending data timed out. Please try again when you have a better connection.',
           responseData: null,
         );
       case DioExceptionType.receiveTimeout:
@@ -274,7 +285,7 @@ class NetworkCaller {
           isSuccess: false,
           statusCode: 408,
           errorMessage:
-              'The server took too long to respond. Please try again later.',
+          'The server took too long to respond. Please try again later.',
           responseData: null,
         );
       case DioExceptionType.badResponse:
@@ -337,7 +348,7 @@ class NetworkCaller {
               isSuccess: false,
               statusCode: statusCode,
               errorMessage:
-                  'There was an issue with your request. Please check your information and try again.',
+              'There was an issue with your request. Please check your information and try again.',
               responseData: null,
             );
           case 401:
@@ -345,7 +356,7 @@ class NetworkCaller {
               isSuccess: false,
               statusCode: statusCode,
               errorMessage:
-                  'Your session has expired. Please log in again to continue.',
+              'Your session has expired. Please log in again to continue.',
               responseData: null,
             );
           case 403:
@@ -353,7 +364,7 @@ class NetworkCaller {
               isSuccess: false,
               statusCode: statusCode,
               errorMessage:
-                  'You don\'t have permission to access this feature.',
+              'You don\'t have permission to access this feature.',
               responseData: null,
             );
           case 404:
@@ -361,7 +372,7 @@ class NetworkCaller {
               isSuccess: false,
               statusCode: statusCode,
               errorMessage:
-                  'The information you\'re looking for couldn\'t be found.',
+              'The information you\'re looking for couldn\'t be found.',
               responseData: null,
             );
           case 422:
@@ -369,7 +380,7 @@ class NetworkCaller {
               isSuccess: false,
               statusCode: statusCode,
               errorMessage:
-                  'The information you provided is invalid. Please check and try again.',
+              'The information you provided is invalid. Please check and try again.',
               responseData: null,
             );
           case 429:
@@ -377,7 +388,7 @@ class NetworkCaller {
               isSuccess: false,
               statusCode: statusCode,
               errorMessage:
-                  'You\'ve made too many requests. Please try again in a moment.',
+              'You\'ve made too many requests. Please try again in a moment.',
               responseData: null,
             );
           case 500:
@@ -388,7 +399,7 @@ class NetworkCaller {
               isSuccess: false,
               statusCode: statusCode,
               errorMessage:
-                  'We\'re experiencing technical difficulties. Please try again later.',
+              'We\'re experiencing technical difficulties. Please try again later.',
               responseData: null,
             );
           default:
@@ -411,7 +422,7 @@ class NetworkCaller {
           isSuccess: false,
           statusCode: 503,
           errorMessage:
-              'No internet connection. Please check your network and try again.',
+          'No internet connection. Please check your network and try again.',
           responseData: null,
         );
       case DioExceptionType.unknown:
@@ -420,7 +431,7 @@ class NetworkCaller {
             isSuccess: false,
             statusCode: 503,
             errorMessage:
-                'No internet connection. Please check your network and try again.',
+            'No internet connection. Please check your network and try again.',
             responseData: null,
           );
         }
@@ -449,13 +460,13 @@ class NetworkCaller {
 
     if (error is TimeoutException) {
       userFriendlyMessage =
-          'The operation timed out. Please try again when you have a better connection.';
+      'The operation timed out. Please try again when you have a better connection.';
     } else if (error.toString().contains('SocketException')) {
       userFriendlyMessage =
-          'No internet connection. Please check your network and try again.';
+      'No internet connection. Please check your network and try again.';
     } else if (error.toString().contains('FormatException')) {
       userFriendlyMessage =
-          'We received an unexpected response. Please try again later.';
+      'We received an unexpected response. Please try again later.';
     }
 
 
