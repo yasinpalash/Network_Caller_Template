@@ -6,10 +6,11 @@ import 'package:network_caller/Features/Authentication/data/data_sources/login_r
 import 'package:network_caller/Features/Authentication/data/repositories/qibla_repository_impl.dart';
 import 'package:network_caller/Features/Authentication/presentation/screens/login_screen.dart';
 
-void main() {
-  Get.put(NetworkChecker());
-  Get.lazyPut(() => AuthRepository());
-  Get.lazyPut(() => LoginRepositoryImpl());
+import 'Core/di/di.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await initDependencies();
   runApp(const MyApp());
 }
 
