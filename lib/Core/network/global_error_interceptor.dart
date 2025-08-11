@@ -1,9 +1,14 @@
 import 'package:dio/dio.dart';
-import '../errors/exceptions.dart';
+import 'package:network_caller/Core/errors/exceptions.dart';
 
 class GlobalErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (err.error is NetworkException) {
+      handler.next(err);
+      return;
+    }
+
     final errorType = err.type;
 
     switch (errorType) {
