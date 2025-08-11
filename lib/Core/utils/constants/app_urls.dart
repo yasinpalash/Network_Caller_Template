@@ -1,6 +1,7 @@
 class AppUrls {
   AppUrls._();
 
-  static const String baseUrl = 'http://10.38.17.224:5354/api/v1/';
+  static const String baseUrl = 'https://dummyjson.com/';
+  static const String login = '${baseUrl}auth/login';
   static const String lookupAddress = 'google.com';
 }

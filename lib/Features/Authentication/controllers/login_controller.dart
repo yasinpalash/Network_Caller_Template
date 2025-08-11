@@ -1,108 +1,52 @@
-import 'package:eventmanagement/core/utils/helpers/snck_bar_helper.dart';
-import 'package:eventmanagement/core/utils/logger.dart';
-import 'package:eventmanagement/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/enum.dart';
-import '../../../core/data/models/response_data.dart';
-import '../../../core/network/network_checker.dart';
-import '../../../core/network/result.dart';
-import '../../../core/network/server_exception.dart';
-import '../../../core/utils/validators/app_validator.dart';
-import '../data/repositories/auth_repository.dart';
+import 'package:network_caller/Core/models/response_data.dart';
+import 'package:network_caller/Core/network/server_exception.dart';
+import 'package:network_caller/Features/Authentication/data/models/login_request_body.dart';
+import 'package:network_caller/Features/Authentication/data/repositories/qibla_repository_impl.dart';
+import 'package:network_caller/core/network/result.dart';
 
 class LoginController extends GetxController {
-  final emailOrPhoneController = TextEditingController();
-  final errorText = ''.obs;
-  final AuthRepository _authRepository = AuthRepository();
-  final isLoading = false.obs;
+  final LoginRepositoryImpl _loginRepository = LoginRepositoryImpl();
 
-  void login() async {
-    errorText.value = '';
+  var usernameController = TextEditingController();
+  var passwordController = TextEditingController();
+  var isLoading = false.obs;
 
-    try {
-      bool connected = await NetworkChecker.isConnected();
-      if (!connected) {
-        errorText.value = 'No internet connection';
-        return;
-      }
+  Future<void> login() async {
+    final username = usernameController.text.trim();
+    final password = passwordController.text.trim();
 
-      final emailInput = emailOrPhoneController.text.trim();
+    if (username.isEmpty || password.isEmpty) {
+      Get.snackbar("Error", "Please enter both username and password");
+      return;
+    }
 
-      if (emailInput.isEmpty) {
-        errorText.value = 'Email or phone is required';
-        return;
-      }
+    isLoading.value = true;
 
-      final isEmail = AppValidator.validateEmail(emailInput) == null;
-      final isPhone = AppValidator.validatePhoneNumber(emailInput) == null;
-      if (!isEmail && !isPhone) {
-        errorText.value = 'Invalid email or phone number';
-        return;
-      }
-      isLoading.value = true;
-      Map<String, dynamic> requestBody;
-      if (isEmail) {
-        requestBody = {"strEmail": emailInput};
-      } else {
-        requestBody = {"strMobileNo": emailInput};
-      }
+    final result = await _loginRepository.login(
+      SignInRequest(username: username, password: password),
+    );
 
-      final result = await _authRepository.login(requestBody);
+    isLoading.value = false;
 
-      switch (result) {
-        case Ok<ResponseData>():
-          final response = result.value;
-          if (response.isSuccess) {
+    switch (result) {
+      case Ok<ResponseData>(value: final response):
+        if (response.isSuccess) {
+          Get.snackbar("Success", "Login successful!");
+          // Navigate or store tokens here
+        } else {
+          Get.snackbar("Login Failed", response.message ?? "Unknown error");
+        }
+        break;
 
-          }
-          break;
-
-        case Error<ResponseData>():
-          final error = result.error;
-          if (error is ServerException) {
-            errorText.value = error.message;
-
-            if (error.statusCode == 404) {
-              AppHelperFunctions.showCustomSnackBar(
-                title: 'Account Not Found',
-                message: 'Please create an account first',
-                type: SnackBarType.error,
-              );
-            } else if (error.statusCode == 400) {
-              errorText.value='';
-              Get.toNamed(
-                AppRoute.passwordScreen,
-                arguments: {
-                  'strEmail': isEmail ? emailInput : null,
-                  'strMobileNo': isPhone ? emailInput : null,
-                  'isNew': false,
-                },
-              );
-            } else if (error.statusCode == 412) {
-              errorText.value='';
-              Get.toNamed(
-                AppRoute.passwordScreen,
-                arguments: {
-                  'strEmail': isEmail ? emailInput : null,
-                  'strMobileNo': isPhone ? emailInput : null,
-                  'isNew': true,
-                },
-              );
-            }
-          } else {
-            AppHelperFunctions.showCustomSnackBar(
-              title: 'Server Error',
-              message: 'Please try again later',
-              type: SnackBarType.error,
-            );
-          }
-          break;
-      }
-    } catch (e) {
-      AppLoggerHelper.error(e.toString());
-    } finally {
-      isLoading.value = false;
+      case Error<ResponseData>(error: final error):
+        if (error is ServerException) {
+          Get.snackbar("Server Error", error.message);
+        } else {
+          Get.snackbar("Error", error.toString());
+        }
+        break;
     }
   }
 }

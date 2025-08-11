@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:network_caller/Features/Authentication/controllers/login_controller.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final LoginController controller = Get.put(LoginController());
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Center(
@@ -29,6 +33,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24.0),
                   TextFormField(
+                    controller: controller.usernameController,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.person_outline),
                       labelText: 'Username',
@@ -40,6 +45,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
+                    controller: controller.passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.lock_outline),
@@ -51,27 +57,28 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24.0),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
+                  Obx(() => SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          onPressed: controller.isLoading.value
+                              ? null
+                              : controller.login,
+                          child: controller.isLoading.value
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  'LOGIN',
+                                  style: TextStyle(fontSize: 16.0),
+                                ),
                         ),
-                      ),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Login button pressed!')),
-                        );
-                      },
-                      child: const Text(
-                        'LOGIN',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ),
-                  ),
+                      )),
                 ],
               ),
             ),
