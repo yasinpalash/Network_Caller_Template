@@ -7,6 +7,8 @@ import 'package:network_caller/Core/network/result.dart';
 class LoginRepositoryImpl extends LoginRepository {
   final AuthRepository _authRepository = AuthRepository();
 
+  LoginRepositoryImpl(AuthRepository authRepository);
+
   @override
   Future<Result<ResponseData>> login(SignInRequest request) {
     return _authRepository.signIn(request);

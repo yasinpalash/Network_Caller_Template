@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:network_caller/Core/models/response_data.dart';
-import 'package:network_caller/Core/network/server_exception.dart';
 import 'package:network_caller/Features/Authentication/data/models/login_request_body.dart';
-import 'package:network_caller/Features/Authentication/data/repositories/qibla_repository_impl.dart';
-import 'package:network_caller/core/network/result.dart';
+import '../../../Core/models/response_data.dart';
+import '../../../Core/network/result.dart';
+import '../../../Core/network/server_exception.dart';
+import '../domain/repositories/login_repository.dart';
 
 class LoginController extends GetxController {
-  final LoginRepositoryImpl _loginRepository = LoginRepositoryImpl();
+  final LoginRepository _loginRepository ;
+  LoginController(this._loginRepository);
 
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
@@ -29,24 +30,23 @@ class LoginController extends GetxController {
     );
 
     isLoading.value = false;
-
     switch (result) {
-      case Ok<ResponseData>(value: final response):
+      case Ok<ResponseData>():
+        final response = result.value;
+        print("Login response: ${response.data}");
         if (response.isSuccess) {
+          final data = response.data;
+          print(data);
           Get.snackbar("Success", "Login successful!");
-          // Navigate or store tokens here
-        } else {
-          Get.snackbar("Login Failed", response.message ?? "Unknown error");
         }
         break;
 
-      case Error<ResponseData>(error: final error):
+      case Error<ResponseData>():
+        final error = result.error;
         if (error is ServerException) {
-          Get.snackbar("Server Error", error.message);
-        } else {
-          Get.snackbar("Error", error.toString());
+
         }
-        break;
     }
+
   }
 }
