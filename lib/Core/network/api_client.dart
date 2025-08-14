@@ -24,15 +24,14 @@ class ApiClient {
       GlobalErrorInterceptor(),
       HttpErrorInterceptor(),
       PrettyDioLogger(
-        requestHeader: true,
         requestBody: true,
         responseHeader: true,
         responseBody: true,
         error: true,
-        compact: true,
       ),
     ]);
 
     return dio;
   }
 }
+
