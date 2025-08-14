@@ -7,7 +7,7 @@ import '../../../Core/network/server_exception.dart';
 import '../domain/repositories/login_repository.dart';
 
 class LoginController extends GetxController {
-  final LoginRepository _loginRepository ;
+  final LoginRepository _loginRepository;
   LoginController(this._loginRepository);
 
   var usernameController = TextEditingController();
@@ -36,17 +36,13 @@ class LoginController extends GetxController {
         print("Login response: ${response.data}");
         if (response.isSuccess) {
           final data = response.data;
-          print(data);
-          Get.snackbar("Success", "Login successful!");
+          print("Login successful: ");
         }
         break;
 
       case Error<ResponseData>():
         final error = result.error;
-        if (error is ServerException) {
-
-        }
+        if (error is ServerException) {}
     }
-
   }
 }

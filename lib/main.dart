@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:network_caller/Core/bindings/controller_binder.dart';
-import 'package:network_caller/Core/network/network_checker.dart';
-import 'package:network_caller/Features/Authentication/data/data_sources/login_remote_data_sourch.dart';
-import 'package:network_caller/Features/Authentication/data/repositories/qibla_repository_impl.dart';
 import 'package:network_caller/Features/Authentication/presentation/screens/login_screen.dart';
-
 import 'Core/di/di.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependencies();
   runApp(const MyApp());
@@ -25,3 +21,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+//emilys
+//emilyspass
