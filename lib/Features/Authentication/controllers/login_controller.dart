@@ -10,8 +10,8 @@ class LoginController extends GetxController {
   final LoginRepository _loginRepository;
   LoginController(this._loginRepository);
 
-  var usernameController = TextEditingController();
-  var passwordController = TextEditingController();
+  var usernameController = TextEditingController( text: "emilys");
+  var passwordController = TextEditingController(text: "emilyspass");
   var isLoading = false.obs;
 
   Future<void> login() async {
