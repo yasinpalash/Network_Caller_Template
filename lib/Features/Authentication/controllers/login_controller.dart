@@ -33,12 +33,27 @@ class LoginController extends GetxController {
     switch (result) {
       case Ok<ResponseData>():
         final response = result.value;
-        print("Login response: ${response.data}");
-        if (response.isSuccess) {
-          final data = response.data;
-          print("Login successful: ");
-        }
+
+        // 🔹 Normal parsed fields
+        print("Success: ${response.isSuccess}");
+        print("Message: ${response.message}");
+        print("Parsed Data: ${response.data}");
+
+        // 🔹 Full raw body
+        print("Full Raw Body: ${response.rawBody}");
+
+        // 🔹 Access full raw JSON
+        final raw = response.rawBody;
+
+        // 🔹 Get only accessToken
+        final accessToken = raw['accessToken'];
+        print("Access Token: $accessToken");
+
+        // Optional: also get refreshToken
+        final refreshToken = raw['refreshToken'];
+        print("Refresh Token: $refreshToken");
         break;
+
 
       case Error<ResponseData>():
         final error = result.error;
