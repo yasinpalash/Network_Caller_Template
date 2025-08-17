@@ -1,22 +1,34 @@
-class ResponseData {
-  final int statusCode;
+class ResponseData<T> {
+  final bool isSuccess;
   final String message;
-  final dynamic data;
+  final T? data;
+
+  /// 🔹 Keep a copy of the entire raw JSON
+  final Map<String, dynamic> rawBody;
 
   ResponseData({
-    required this.statusCode,
+    required this.isSuccess,
     required this.message,
-    required this.data,
+    this.data,
+    required this.rawBody,
   });
 
-  factory ResponseData.fromJson(Map<String, dynamic> json) {
-    return ResponseData(
-      statusCode: json['statusCode'] ?? 0,
+  factory ResponseData.fromJson(
+      Map<String, dynamic> json, {
+        T Function(dynamic)? fromJsonT,
+      }) {
+    return ResponseData<T>(
+      isSuccess: json['isSuccess'] ?? false,
       message: json['message'] ?? '',
-      data: json['data'],
+      data: fromJsonT != null && json['data'] != null
+          ? fromJsonT(json['data'])
+          : json['data'],
+      rawBody: json,
     );
   }
 
-  bool get isSuccess => statusCode == 200 || statusCode == 201;
-  bool get isError => !isSuccess;
+  @override
+  String toString() {
+    return "ResponseData(isSuccess: $isSuccess, message: $message, data: $data, rawBody: $rawBody)";
+  }
 }
