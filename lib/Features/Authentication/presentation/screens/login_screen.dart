@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../Core/utils/validators/app_validator.dart';
 import '../../controllers/login_controller.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -50,12 +51,7 @@ class LoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Username is required';
-                        }
-                        return null;
-                      },
+                      validator: AppValidator.validateUsername,
                     ),
                     const SizedBox(height: 16),
                     Obx(() => TextFormField(
@@ -77,12 +73,7 @@ class LoginScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Password is required';
-                            }
-                            return null;
-                          },
+                          validator: AppValidator.validatePassword,
                         )),
                     const SizedBox(height: 24),
                     Obx(
