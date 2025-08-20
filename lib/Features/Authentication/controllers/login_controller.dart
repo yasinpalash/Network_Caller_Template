@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:network_caller/Core/utils/logging/logger.dart';
 import 'package:network_caller/Features/Authentication/data/models/login_request_body.dart';
 import '../../../Core/models/response_data.dart';
 import '../../../Core/network/result.dart';
@@ -10,54 +11,63 @@ class LoginController extends GetxController {
   final LoginRepository _loginRepository;
   LoginController(this._loginRepository);
 
-  var usernameController = TextEditingController( text: "emilys");
-  var passwordController = TextEditingController(text: "emilyspass");
-  var isLoading = false.obs;
+  final formKey = GlobalKey<FormState>();
+  final usernameController = TextEditingController(text: "emilys");
+  final passwordController = TextEditingController(text: "emilyspass");
+
+  final isLoading = false.obs;
+  final isPasswordVisible = false.obs;
+
+  void togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
+
 
   Future<void> login() async {
+    if (!formKey.currentState!.validate()) return;
+
     final username = usernameController.text.trim();
     final password = passwordController.text.trim();
 
-    if (username.isEmpty || password.isEmpty) {
-      Get.snackbar("Error", "Please enter both username and password");
-      return;
-    }
-
     isLoading.value = true;
 
-    final result = await _loginRepository.login(
-      SignInRequest(username: username, password: password),
-    );
+    try {
+      final result = await _loginRepository.login(
+        SignInRequest(username: username, password: password),
+      );
 
-    isLoading.value = false;
-    switch (result) {
-      case Ok<ResponseData>():
-        final response = result.value;
+      switch (result) {
+        case Ok<ResponseData>():
+          final response = result.value;
+          final raw = response.rawBody;
+          final accessToken = raw['accessToken'];
+          AppLoggerHelper.info("Login Success | Access Token: $accessToken");
 
-        // 🔹 Normal parsed fields
-        print("Success: ${response.isSuccess}");
-        print("Message: ${response.message}");
-        print("Parsed Data: ${response.data}");
+          break;
 
-        // 🔹 Full raw body
-        print("Full Raw Body: ${response.rawBody}");
-
-        // 🔹 Access full raw JSON
-        final raw = response.rawBody;
-
-        // 🔹 Get only accessToken
-        final accessToken = raw['accessToken'];
-        print("Access Token: $accessToken");
-
-        // Optional: also get refreshToken
-        final refreshToken = raw['refreshToken'];
-        print("Refresh Token: $refreshToken");
-        break;
-
-
-      case Error<ResponseData>():
-        final error = result.error;
-        if (error is ServerException) {}
+        case Error<ResponseData>():
+          final error = result.error;
+          if (error is ServerException) {
+            AppLoggerHelper.error("❌ Server Error: ${error.message}");
+          }
+      }
+    } catch (e) {
+      AppLoggerHelper.error("Unexpected Error: $e");
+      Get.snackbar(
+        "Error",
+        "Something went wrong. Please try again later.",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
     }
+  }
+
+  @override
+  void onClose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.onClose();
   }
 }
