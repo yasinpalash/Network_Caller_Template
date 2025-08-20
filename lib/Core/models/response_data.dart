@@ -2,8 +2,6 @@ class ResponseData<T> {
   final bool isSuccess;
   final String message;
   final T? data;
-
-  /// 🔹 Keep a copy of the entire raw JSON
   final Map<String, dynamic> rawBody;
 
   ResponseData({
@@ -25,10 +23,5 @@ class ResponseData<T> {
           : json['data'],
       rawBody: json,
     );
-  }
-
-  @override
-  String toString() {
-    return "ResponseData(isSuccess: $isSuccess, message: $message, data: $data, rawBody: $rawBody)";
   }
 }
