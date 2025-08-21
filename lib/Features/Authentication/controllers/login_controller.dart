@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:network_caller/Core/utils/logging/logger.dart';
 import 'package:network_caller/Features/Authentication/data/models/login_request_body.dart';
+import 'package:network_caller/Features/Courses/presentation/screens/course_screen.dart';
 import '../../../Core/models/response_data.dart';
 import '../../../Core/network/result.dart';
 import '../../../Core/network/server_exception.dart';
@@ -42,6 +43,8 @@ class LoginController extends GetxController {
           final raw = response.rawBody;
           final accessToken = raw['accessToken'];
           AppLoggerHelper.info("Login Success | Access Token: $accessToken");
+
+          Get.to(()=> CourseScreen());
 
           break;
 
