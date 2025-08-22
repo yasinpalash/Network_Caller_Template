@@ -1,16 +1,18 @@
-# network_caller
+# 🚀 Flutter API Client Architecture (Dio + Interceptors + Repository + Controller)
 
-A new Flutter project.
+A **clean and scalable Flutter API client architecture** built with **Dio**.  
+This project demonstrates **best practices** for handling API calls, authentication, token management, and state management using the **Repository Pattern** with a **Controller layer**.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📌 Features
 
-A few resources to get you started if this is your first Flutter project:
+✅ Clean & scalable project structure  
+✅ Centralized API client using **Dio**  
+✅ Global **interceptors** for request & response handling  
+✅ Repository layer for better data management  
+✅ Controller layer for state management (GetX / Provider compatible)  
+✅ Built-in error handling & logging  
+✅ Easy to maintain and extend  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
